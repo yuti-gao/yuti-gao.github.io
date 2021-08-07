@@ -21,7 +21,7 @@
 title: Yuti's website
 email: gaoyt9@gmail.com
 description: my personal website 
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: https://yuti-gao.github.io # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
 
