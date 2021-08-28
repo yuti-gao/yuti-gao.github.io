@@ -1,9 +1,9 @@
+---
 layout: post
 title:  "Life in Boulder"
 date:   2021-08-28 
 categories: jekyll update
-
-------
+---
 # 户外城市
 
 Night life in town. Night is bored sometimes. So people do spores game, Together. Go walking. Read books, life here is guider. Really different from The city life in urban China. Games are funny., they can activate people. Wake people up. 
