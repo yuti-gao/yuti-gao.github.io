@@ -18,9 +18,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Yuti's website
+title: Yuti Gao
 email: gaoyt9@gmail.com
-description: my personal website 
+description: record my US PhD life as an observer 
 url: https://yuti-gao.github.io # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
