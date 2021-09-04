@@ -22,8 +22,7 @@ title: Yuti Gao
 email: gaoyt9@gmail.com
 description: record my US PhD life as an observer 
 url: https://yuti-gao.github.io # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+
 
 # Build settings
 theme: minima
