@@ -71,4 +71,6 @@ When you read a paper, think about the journal first. （了解这个期刊）
 
 最近在department email 里看到不少邮件让我意识到在美国法律的作用。 从equal pay, 到pregnancy，学院和研究生院都会告知你你应有的权利。在community equity course 这样入学必完成的课程和quiz，也会告知你应有的权利。
 
+在美国，读博是你和学院的关系。最近感受到了一个差异，遇到不好对付的人，中国传统的想法是应该学习怎么和不同的人相处。但其实可以这样想，这只是社会关系的一部分，就像交朋友一样，合的来合，合不来就算了。
+
 
