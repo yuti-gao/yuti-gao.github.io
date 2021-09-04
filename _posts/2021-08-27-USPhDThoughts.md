@@ -4,6 +4,8 @@ title:  "2021 US PhD thoughts"
 date:   2021-08-27 
 categories: jekyll update
 ---
+> 这个帖子主要用来放一些我在研究生教育中的思考。
+
 ## Your limit is your mindset. 你是你自己的阻碍。
 ## 选择你的环境
 
