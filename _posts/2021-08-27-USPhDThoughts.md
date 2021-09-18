@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "2021 US PhD thoughts"
+title:  "PhD 21Fall August"
 date:   2021-08-27 
 categories: jekyll update
 ---
