@@ -6,3 +6,13 @@ No naps. Avoid taking naps during the day. If you can’t make it through the da
 
 
 https://www.colorado.edu/counseling/
+
+## 积极日志
+People can cultivate positive energy by
+learning to change the stories they tell
+themselves about the events in their lives.
+We teach them to tell the most hopeful
+stories possible.
+
+## 简单食物
+Avocado! 
