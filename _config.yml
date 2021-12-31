@@ -18,10 +18,10 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Yuti Gao
-email: gaoyt9@gmail.com
-description: copyright@https://yuti-gao.github.io/
-url: https://yuti-gao.github.io # the base hostname & protocol for your site, e.g. http://example.com
+# title: Yuti Gao
+# email: gaoyt9@gmail.com
+# description: copyright@https://yuti-gao.github.io/
+# url: https://yuti-gao.github.io # the base hostname & protocol for your site, e.g. http://example.com
 
 
 # Build settings
@@ -29,6 +29,60 @@ theme: minima
 plugins:
   - jekyll-feed
 
+name: Researcher
+description: Personal website
+menu:
+ - page: About
+   url: /about
+ - page: Papers
+   url: /papers
+   links:
+    - title: Working papers
+      url: "#working-papers"
+    - title: Published papers
+      url: "#published-papers"
+ - page: Research Projects
+   url: /research
+   links:
+    - title: "Project One"
+      url: "#project-one"
+    - title: "Project Two"
+      url: "#project-two"
+    - title: "Project Three"
+      url: "#project-three"
+    - title: "Project Four"
+      url: "#project-four"
+ - page: Curriculum Vitae
+   url: /cv
+   links:
+    - title: Experience
+      url: "#experience"
+    - title: Education
+      url: "#education"
+    - title: Positions
+      url: "#positions"
+    - title: Miscellaneous
+      url: "#miscellaneous"
+ - page: Teaching
+   url: /teaching
+ - page: Media
+   url: /media
+ - page: Accolades
+   url: /accolades
+menu_external:
+ - title: OleVik.me
+   url: "http://olevik.me/"
+ - title: Research Gate
+   url: "https://www.researchgate.net/profile/Ole_Vik"
+ - title: LinkedIn
+   url: "https://no.linkedin.com/in/olehhvik"
+ - title: Twitter
+   url: "https://twitter.com/olehhv"
+mathjax: false
+markdown: kramdown
+encoding: utf-8
+baseurl: 
+locale: en_GB
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
