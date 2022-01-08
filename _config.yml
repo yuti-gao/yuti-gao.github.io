@@ -29,7 +29,7 @@ theme: minima
 plugins:
   - jekyll-feed
 
-name: Researcher
+name: 
 description: Personal website
 menu:
  - page: About
