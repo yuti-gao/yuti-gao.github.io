@@ -1,33 +1,23 @@
-什么是基因组？你的生命之书。你所有的基因加总起来就是基因组。
+What is genome? The bibliography of your life.
 
-**需要的背景知识：组装基因组就是搞清楚ATGC这四个核苷酸怎么排列。**
+**Genome assembly is to figure out the order of A,T,G,C.**
 
-一开始你从DNA测序仪器上得到了一堆原始乱码数据，就像是你得到了非常多的汉字，但他们是混乱无序的。你想把它们编成一本生命之书，那么就要有章节有目录，要以你能看得懂的语言和句子写成。
-所以呢，组装一个基因组，第1步就是你把每个字组装成一句能看得懂的句子，
-然后你把每一个句子编成一个段落，de novo assembly，  
-再把每一个段落归入各自的章节里面去，
-然后再把不同的篇章按照前后顺序组装成这本生命之书。
-这里的每一步都对应着组装中的某个技术和算法。
-所以说科学都是按照人的思维来进行的，不同的学科都是遵照某种很常识性的原理。
+After sequencing, you get garbled characters. To assemble a book, first, we need to get each sentence from these characters first.second, we put the sentences into a paragraph, and then organize the paragraphs into an article, and then a chapter, a book. 
+Sentence(variant calling) ->  paragraph(De Bruijn graph) -> article(sequence alignment) -> chapter(annotation) -> book(the genome)
+(science starts from common sense!)
 
-技术其实是很容易掌握的，但美国的教育最启发我的一点是，当我们接到组装一个基因组任务时，我们第一个要问的问题，不是现在有什么方法可以用来组装一个基因组，而是**我们要问最原始的问题，为什么基因组需要组装呢？组装这种思路是靠谱的吗？**
+Techniques is easy to get, but when we want to get a genome, **the first question we should ask is "why we need to 'assemble' genome?, is it the best way to get genome?",**  rathe than  "what kind of methods we can use to assemble a genome", 
+So we should start from the question, how we get genetic information? Why cannot we directly get the organized genome?
+let's think about you want to download a e-book from web, which has 100 chapters, 1GB in total. However, your hard-drive can only store 200MB, so you have to download the book by one chapter after another chapter. Similarly, because of the technical limitation, the sequencing so far can only break down the genome into smaller pieces, each piece ranges from 100 base pair to 300 base pair. And the biomedical reading machine is not that accurate as the computers, so the problem is when you download the book(of genome), you always get garbled text and you don't know which chapter you're downloading.
 
-所以我们有必要先了解一下，基因是怎么获得的？难道我们不能直接获得人的整个基因组吗？
+So, maybe one day we can have revolution in the biotech sequencing, and then we can get the genome directly.
 
-测出人的整个基因组，是最直接也最准确的方法，but，技术有限。目前的测序因为测试仪器的局限性只能够把人的这个基因打碎成不同的片段。（目前的测试技术很局限的，所以他们不能够通测基因组，只能够测出上百万亿个小片段，而且每一个片段的长度一般只能在100base pair和300base pair（100bp-300bp）之间。）这就是好比是你从网上你想下载一本电子书，它有100章，但是需要1G，但你的硬盘只能存200M，所以你只好把他们分章下载。生物测序领域的技术相对电子工程没有那么准确，所以你在下载每一章的时候呢，永远都会乱码，并且他们不能以某种特定的顺序来下载。
-
-总而言之，你得到的就是一堆，类似于“武全凑番是误三设肚与凑手今上体楼口咯微邓波儿喇裤伤苦悟@$&@$£#¥€……" 这样的东西。
-
-所以之所以我们要问最原始的问题，为什么基因组需要组装呢？组装这种思路是靠谱的吗？是因为如果我们想要去解决在这个方向上的问题，我们有可能直接去推翻这些问题的前提。
-
-接下里就先说说，如果我们需要组装一个基因组，技术上怎么实现？介绍完技术再反思一下，这些步骤都存在着怎样的问题？
-
-## wget 从网页上下载原始测序数据
-
-如果是自己的研究，就是直接测序得到数据，进入下一步。这个帖子作为任何人都可以上手去做的，可以从NCBI上下载数据。
+This blog would serve as a step-by-step tutorial for people interested in assemble a genome by themselves. After the methods, we will talk about what kind of problems these methods have.
 
 
-主要命令：wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR7811197/SRR7811197
+## wget get the original sequencing file (format: fasta)
+If using public dataset, we can use NCBI.
+wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR7811197/SRR7811197
 
 ```bash
 genomics2021@ruderalis:~/student_folders/yutigao/finalplroject$ wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR7811197/SRR7811197
@@ -46,14 +36,12 @@ SRR7811197       100%[=========>]   3.78G  3.43MB/s    in 12m 0s
 
 # fastq-dump --split -3 (files)
 
-fastq 是测序得到的数据的格式
-
 > --split-3 separates the reads into left and right ends. If there is a left end without a matching right end, or a right end without a matching left end, they will be put in a single file.
 > [bioinformatics notebook] (https://rnnh.github.io/bioinfo-notebook/docs/fastq-dump.html)
-> DNA 有双链，从左边读一遍，从右边再读一遍
+> DNA is double-helixed, read from left to right, and then right to left
 > dump, Database dump, usually means a record of the table structure and/or the data from a database
 
-主要命令： fastq-dump --split-3 SRR7811197
+fastq-dump --split-3 SRR7811197
 
 ```bash
 genomics2021@ruderalis:~/student_folders/yutigao/finalplroject$ fastq-dump --split-3 SRR7811197 
@@ -71,7 +59,7 @@ SRR1868103_1.fastq  SRR7811197_1.fastq
 
 --split-3 separates the reads into left and right ends. so we get SRR7811197_1.fastq，SRR7811197_2.fastq 
 
-检查得到fastq 是不是相同的长度
+check whether the 2 fastq has same length
 
 ```bash
 genomics2021@ruderalis:~/student_folders/yutigao/finalplroject$ wc -l *fastq
@@ -79,9 +67,9 @@ genomics2021@ruderalis:~/student_folders/yutigao/finalplroject$ wc -l *fastq
   11039012 SRR7811197_2.fastq
 ```
 
-# fastqc 检查数据质量
+# fastqc: quality control
 
-## 主要命令： fastqc SRR7811197_1.fastq, fastqc SRR7811197_2.fastq
+##  fastqc SRR7811197_1.fastq, fastqc SRR7811197_2.fastq
 
 ```bash
 genomics2021@ruderalis:~/student_folders/yutigao/finalplroject$ fastqc SRR7811197_1.fastq
@@ -127,9 +115,9 @@ SRR1868103_1_fastqc.html         100%  720KB   2.1MB/s   00:00
 
 ![fastqc 网页](/Users/gaoyuting/Pictures/fatsqc.png)
 
-sequence quality 在绿色区域就证明这批测序的质量是过关的，如果不过关呢？我们就需要进行Trimmomatic
+sequence quality in green area means good, if there are some in red area, we need to Trimmomatic
 
-# Trimmomatic 筛选数据
+# Trimmomatic, drop out the bad quality data 
 
 trim v.
 remove the edges from and cut down to the desired size
@@ -140,17 +128,15 @@ remove the edges from and cut down to the desired size
 Paired End Mode:
 java -jar <path to trimmomatic.jar> PE [-threads <threads] [-phred33 | -phred64] [-trimlog <logFile>] <input 1> <input 2> <paired output 1> <unpaired output 1> <paired output 2> <unpaired output 2> <step 1> ...
 
-如果你想知道这串命令对你的数据做了什么，
+What does these command lines do?
 
-> Trimmomatic is a fast, multithreaded command line tool that can be used to trim and cropIllumina (FASTQ) data as well as to remove adapters.  adapter 简要理解就是测序公司为了测序人为加进去的一段DNA序列，就像是钓鱼的时候需要用一条虫先当诱饵。现在我们需要把它从我们的基因组里去掉。
+> Trimmomatic is a fast, multithreaded command line tool that can be used to trim and cropIllumina (FASTQ) data as well as to remove adapters.  adapter is a short piece of sequence that sequencing company add during sequencing, like the fishing bait. Now we need to remove it from the genomic data we get.
 
 > The paired end mode will maintain correspondence of read pairs and also use the additional
 > information contained in paired reads to better find adapter or PCR primer fragments
-> introduced by the library preparation proces
+> introduced by the library preparation process
 
 > phred + 33 or phred + 64 是quality scores, depending on the Illumina pipeline used
-
-e.g.
 
 ```bash
 genomics2021@ruderalis:~/student_folders/nolan_kane$ cat command.txt
@@ -175,8 +161,8 @@ SRR7811197_1.fastq
 
 # Pipeline: bwa + samtools + bcftools + grep & awk 
 
-和reference genome 进行比较
-bwa, samtools, bcftools 是写好的bioinformatics program, 可以直接在terminal 里敲这些名字来了解怎么使用他们，前提是系统里已经装好了这些东西。
+align to reference genome 
+bwa, samtools, bcftools are bioinformatics program well written and contained
 
 Program: bwa (alignment via Burrows-Wheeler transformation)
 Version: 0.7.17-r1188
@@ -205,7 +191,7 @@ About:   SNP/indel variant calling from VCF/BCF. To be used in conjunction with 
 # awk '$6>100{print$2,$6}' > goodsnps.txt
 ```
 
-说明版
+with annotation:
 
 ```bash
 ### create bam
@@ -256,7 +242,7 @@ awk '$6>100{print$2,$4,$5,$6}' > goodsnps.txt
 awk '$6>100{print$2,$4,$5,$6}' indels.txt > goodindels.txt
 ```
 
-这里用到awk 
+# awk 
 
 # printing in awk: condition{action}
 
@@ -269,7 +255,7 @@ also can be:
   $ awk ‘1 {print $0}’ ler.vcf (in this case you can remove the default in this case for example {print $0},
   and awk will print the same list.
 
-让你的pipeline 可以重复使用
+make the pipeline reproducible
 
 ```bash
 ref = organelles.fa
@@ -289,30 +275,27 @@ awk '$6>100{print $1,$2,$4,$5,$6}'${name}_snps_indels.txt
  > goodsnps.txt
 ```
 
-# de novo assembly 从字到段落 
+# de novo assembly (sentence -> paragraph) 
 
-de novo, Latin, literally ‘from new"，也就是从头开始组装基因组 
-直到这一步之前，我们所得到的
+de novo, Latin, literally ‘from new"
 
 ## De Bruijn Graph
 
-直到这一步之前，我们一直都在准备数据，还没有开始用算法对这些混乱的数据进行排序。
 
-在de novo assembly 里面有非常多的算法，这里采用De Bruijn Graph.
-
-De Bruijn Graph是一种示意图的思路，它可以用来展示不同的序列之间的重叠的关系。比如甲乙丙排排站，怎么样他们会有所在位置上的重叠。同样的，基因组里ATGC4个进行不同的组合他们会有不同的重叠，从而由此来推测他们先后的顺序。有非常多的科学家去解决这个问题，他们所能想到的就是从不同的重叠关系中得到一条最优的路径，从而去得到最初的contig，也就是最初被打破时候的片段。
-
-
-
+De Bruijn Graph is way to show the overlap between different objects. Different order of ATGC would have different overlap and distance, De Bruijn graph would pick a best path based on these overlap and distance. Then we get the best contig, which ideally should be the original piece before the sequencing beaks it down.
 
 # SPAdes 
 
 [software SPAdes](https://cab.spbu.ru/software/spades/)
-SPAdes 是圣彼得堡
 
-SPAdes 就是建立在De Bruijn Graph基础上，从我们之前得到的数据中提取长度为K的核酸片段，称为K-mer, 然后利用这些K-mer之间重复的部分来构建这个scaffold。
+SPAdes is a bioinformatic program based on De Bruijn Graph, which divide the SNPs into K base pairs nucleotides, called K-mer, and then construct the scaffold based on the overlap between K-mer.
 
-K-mer一定要是奇数。为什么？比如说这条K-mer的数目是17，(17个核苷酸）ATGGGGGCTCTCGAAAA, 那么在运用这个算法的时候，他们首先对这个这个片段正的算一遍，ATGGGGGCTCTCGAAAA，然后反的再算一遍，AAAAGCTCTCGGGGGTA。之所以要算两遍，是因为DNA是有双链，所以比如说在正的ATGGGGGCTCTCGAAAA中的第三个G是属于正的这条链，那你的算法就不能把它归到反链里的第3个去，因为我们可以看反链的AAAAGCTCTCGGGGGTA第三个其实是A。
+Rule: K must be odd.
+Why?
+For example, K-mer = 17, ATGGGGGCTCTCGAAAA.
+DNA is double-helixed, so SPAdes read it twice in different directions, 1st time from left to right, ATGGGGGCTCTCGAAAA, and then right to left, AAAAGCTCTCGGGGGTA, we can see the two reads are different.
+
+
 
 ```bash
 head -n 4000000 SRR7811219_1_paired.fq > subset_1.fq
@@ -324,11 +307,10 @@ head -n 400000 mapped_2.fq > subset_mapped_2.fq
 
 ## spades --phred-offset 33 --careful -k 21,33,45,55,77 -1 subset_mapped_1.fq -2 subset_mapped_2.fq -o spades4
 
-这里提到了scaffold, contig 等不同的名称，
 
 ![scaffold, contig](https://github.com/yuti-gao/yuti-gao.github.io/raw/b280a5aae91b04e56b099822e7383141528def18/_posts/Paired-end%20reads%20span%20gaps.png)
 
-从SPAdes 中我们可以得到一个scaffold.fasta, 由不同的node组成
+we get scaffold.fasta from SPAdes, which has different folds.
 
 ```bash
 >NODE_1_length_61316_cov_90.563334
@@ -346,28 +328,30 @@ GCTCTCGTTTGATACCAGATAAAGCAAATCTGGGTTTTCGCTTCCCTTGTGATGGACCTG
 GAAGAGGGGGGACATGTCAAGTATCCGCTTGGGATCATGTCTTCTTAGGATTATTTTGGA
 ```
 
-这里的length是指有多少个核苷酸，比如AC就是两个核苷酸
-cov, coverage, 指的是测序深度
+length, # of nucleotides
+cov, coverage, how deep the sequencing is 
 
 ## put nodes in order 
 
-把scaffold.fasta里的node title 去掉，得到一个纯fasta文件，align to reference genome in [NCBI blast](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
+remove node title from scaffold.fasta，align to reference genome in [NCBI blast](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
 
 ![nodes](https://github.com/yuti-gao/yuti-gao.github.io/raw/ae639ff5e1a8d9cf9dca3637980bf8206e4d61b8/_posts/nodes.png)
 
+put fasta in order according to the nodes shown here 
 鼠标光标会显示在依次显示的是第几个node, 我们需要将fasta 按照这里的node的顺序重新排列
 
 compare the reference choloplast genome(query genome) with my genome (subject genome)
 reorder the nodes sequence from scaffolds according to the graphic summary
 make a dotplot
-![dotplot](https://github.com/yuti-gao/yuti-gao.github.io/raw/abcf2e910b397a48a518d682c685628985e10021/_posts/dot%20plot.png)(这里插一句，用markdown语法在github page 里插入图片，如https://qcow.cc/common/2021/02/23/HowToUsePictureOnGithubPages/所说很多网上案例都没有实际解决问题...应该是把图片放在github page 所在repository, copy permalink, https://github.com/yuti-gao/yuti-gao.github.io/blob/abcf2e910b397a48a518d682c685628985e10021/_posts/dot%20plot.png, 按markdown 图片语法 ![]()),把permalink 里的blob 换成raw )
+![dotplot](https://github.com/yuti-gao/yuti-gao.github.io/raw/abcf2e910b397a48a518d682c685628985e10021/_posts/dot%20plot.png)(by the way，insert picture in github page，see https://qcow.cc/common/2021/02/23/HowToUsePictureOnGithubPages/ put picture in github page repository, copy permalink, https://github.com/yuti-gao/yuti-gao.github.io/blob/abcf2e910b397a48a518d682c685628985e10021/_posts/dot%20plot.png, follow the picture syntax ![]()),change blob permalink into raw )
 
 # error correction 
 
-主要是算法，都会有误差。（ALL genomes have mistakes)
-经过无数科学家花了超长时间拼出来的、最新的人类基因组第38版，甚至仍存在350个gap。
+"ALL genomes have mistakes", all algorithms have errors.
+The latest human genome 38th version, still has 
+350 gaps.
 
-error correction是我感觉最难的一步。
+error correction is most difficult 
 
 ## Identifying errors
 
@@ -388,9 +372,9 @@ run the SNP calling pipeline again
 
 ## reference genome 
 
-[这是我需要用到的reference genome](https://www.ncbi.nlm.nih.gov/nuccore/KY849971.1)
+[reference genome](https://www.ncbi.nlm.nih.gov/nuccore/KY849971.1)
 
-重要的是怎么找到reference genome: 
+Tips on finding reference genome: 
 
 taxonomy -> genome -> organelle annotation report -> replicons
 
@@ -400,7 +384,7 @@ taxonomy -> genome -> organelle annotation report -> replicons
 
 # gap filling 
 
-从上图中可以看到，在拼接的过程中，会产生一些gap, 空缺。
+
 
 ```bash
 I’m trying to fill this gap, below, which is 24 bases, between these two contigs.
@@ -476,58 +460,52 @@ CGGGGGTTCGAATCCCTCCTCGCCCACAACCGGCCCAAAAGGGAAGGGCCTTTCCCTCTG
 
 
 ## summary of error correction
-
-结合gap filling的这个方法，整个error correction的流程：
-
-加入rrn16 这个基因的序列和reference genome 不符
-
-1.reference genome找rrn16 
+error rnn16
+1.reference genome, look for rrn16 
 
 2.copy rr16 sequence, blast rrn16 (reference genome) with my own genome 
 
-3.在alignment 找到plus/plus 首尾， 查找my own genome fasta 
+3. alignment, find the whole piece of plus/plus，copy and find in my own genome fasta 
 
-4.gap filling, 在terminal 里 grep '' *fq 
+4.gap filling, terminal:  grep '' *fq 
 
-5.修复好plus/plus 之后，reverse complement, 用正确的reverse complement 的首尾查找my genome fasta (一般plus/minus 首尾是健在的，只是缺少中间的一些部分)，这一步只是要找到reverse complement(inverted repeat)的位置
+5. fix the plus/plus，reverse complement, check the position of reverse complement(inverted repeat)
 
-6. 用正确的reverse complement直接替换掉plus/minus
+6. replace plus/minus with reverse complement
 
 # genome annotation 
 
-这一教程以叶绿体基因组组装为例
+e.g. choloplast 
 
 [chloroplast annotation](https://chlorobox.mpimp-golm.mpg.de/geseq.html)
 
-得到一堆文件，其中我们看genbank file, 和直观的circular genome
+check genbank file, and circular genome
 
 ![o](https://github.com/yuti-gao/yuti-gao.github.io/raw/812ad05fb7f8aade4e79645265125cdc3e8d65f9/_posts/1102_norinum_25_flax_SSR220_OGDRAW.jpg)
 
-从这张图里我们可以和reference genome 的paper进行对比，发现有几个问题：
+look at the reference genome paper, several bugs:
 
-1.fragment (这个基因的片段是破碎的)
+1.fragment
 
-2.inverse repeat not identical （inverse repeat 应该是一模一样的）
+2.inverse repeat not identical 
 
 3.tRNA annotated repeatedly 
 
-通过annotation 也可以再一次检验 error correction 这一步骤是否彻底
+Through annotation, we can double check our error correction
 
 # submission
 
-提交到NCBI genbank, banlkt 环节会报错，就是再一次检验error correction 是否有残留的bug
+Warnings from NCBI genbank, banlkt, examines our error correction 
 
-可能会出现的一些错误：
+Some potential errors:
 
 1) protein coding sequences contain internal stop codons and/or lack start/stop 
 
 Check stop condon with https://web.expasy.org/translate/
 
-2. annotation 里基因的起始位置和在blast 页面不同
+2. postion in annotation 
 
 functional annotation: compare the similarity  
-
-还有生物学意义上的annotation 
 
 1.peudogene 
 
@@ -535,28 +513,19 @@ Find the sequence of pseudogene https://www.bioinformatics.org/sms2/genbank_feat
 
 2.RNA editing
 
-需要在submission 的页面手动添加说明，便于genbank的审核人知道这不是annotation 错误。
-
-到这里就结束了。
+manually add it up
 
 # take home message 
 
-1.生物测序公司获取了很多DNA片段
+1.get DNA pieces from sequencing 
 
-2.运用某种算法把DNA的篇章顺序排列出来
+2. graph algorithms show the order of nodes
 
-3.和reference genome 也就是已知的被认为是正确的基因组进行比对
+3. align to "right" genome (reference genome)
 
-4.生物信息工具（variant calling) 判断和reference genome 之间的差异是真的物种差异还是error 
+4.variant calling tell us the differences are biological difference or error
 
-5.对于显示是error的。回想一下，既然是算法没算准的问题，我们需要和原始从测序阶段得到的序列进行比对，用grep检索你的error 序列附近的序列，进行error correction 和 gap filling 
+5. for errors, grep search the SNPs near your error, do error correction and  gap filling 
 
-6.annotation 把序列ATGC这样的信息转为这个区域是编码RNA, 编码什么蛋白质这样的功能信息
+6.annotation, find the protein function
 
-# further reading 
-
-- 目前这样的组装思路是基于与reference genome 比较，也就是认为同一个物种差异不大。这样是否可靠？
-
-我找到了一篇文献，同样追问了这个问题，于是现在有了pan genome 这样新的方法。[Pan-genomes: moving beyond the reference](https://www.nature.com/articles/d42859-020-00115-3)
-
-- 组装一个基因组是为了更好地了解这个物种，进一步进行物种之间的比对，和对基因的功能的研究。比如人类基因组，就可以研究基因与疾病之间的联系。
