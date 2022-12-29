@@ -1,7 +1,7 @@
 ---
 layout: page
 title: CV
-permalink: /about/
+permalink: /cv/
 ---
 Hi, I am a PhD student in biological anthropology at University of Colorado Boulder.
 
