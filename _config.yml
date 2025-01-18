@@ -30,7 +30,7 @@ plugins:
   - jekyll-feed
 
 name: 
-description: Personal website
+description: My goal is to keep this website as simple as possible. In the "posts", I share my research travel experiences, books that have enlightened me, hidden curricula of academia (my observations as a PhD student), and occasionally some research findings.
 menu:
  - page: About
    url: /about
