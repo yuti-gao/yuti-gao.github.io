@@ -1,8 +1,9 @@
 ---
 layout: page
-title: CURRICULUM VITAE
+title: CV
 permalink: /cv/
 ---
+## _CURRICULUM VITAE_
 Yuting Gao <br> 
 Department of Anthropology <br> 
 University of Colorado Boulder <br> 
@@ -27,7 +28,8 @@ Host-Microbe Interactions; Dietary adaptation; Ancient DNA analysis with museum 
 2021   Fellowship, Department of Anthropology, University of Colorado Boulder($6000)                                             
 ### RESEARCH PROJECTS
 - Dissertation project: investigate phylogeny, diet and anatomy with primate oral microbiome using dental calculus samples from museum specimens
-- Collaborative project: study diet and Tuberculosis pathogen with human dental calculus samples from a 19-20th century religious burial in Colorado  
+- Collaborative project: study diet and Tuberculosis pathogen with human dental calculus samples from a 19-20th century religious burial in Colorado
+  
 ### CONFERENCES 
 - Poster presentation  
 American Association of Biological Anthropology   
